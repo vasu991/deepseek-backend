@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Message = require('./Message');
 
 const sessionSchema = new mongoose.Schema({
     sessionId: { type: String, required: true, unique: true },

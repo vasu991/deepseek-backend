@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['user', 'admin'],
       default: 'user'
-    }
+    },
+    sessions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Session' }]
   },
   { timestamps: true }
 );
@@ -35,6 +36,7 @@ userSchema.pre('save', async function (next) {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     user.password = await bcrypt.hash(user.password, salt);
+    
     next();
   } catch (error) {
     return next(error);

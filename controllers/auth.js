@@ -1,14 +1,25 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const Session = require('../models/Session');
 
 // Register a new user
 const register = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        return res.status(400).json({ error: 'User already exists' });
+    }
     const user = new User({ username, email, password});
-    console.log('Stored Hashed Password:', user.password);
+    // Create a new session for the user
+    const session = new Session({ sessionId: generateSessionId() });
+    await session.save();
+
+    // Associate the session with the user
+    user.sessions.push(session._id);
+    await user.save();
+    // console.log('Stored Hashed Password:', user.password);
     await user.save();
     res.json({ message: 'Registration successful' });
   } catch (error) {
@@ -45,4 +56,10 @@ const login = async (req, res, next) => {
       next(error);
   }
 };
+
+// Helper function to generate a unique session ID
+function generateSessionId() {
+  return Math.random().toString(36).substring(2, 11);
+}
+
 module.exports = { register, login };
