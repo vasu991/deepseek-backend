@@ -57,7 +57,7 @@ router.get('/new-session', authenticate, async (req, res) => {
     try {
         const sessionId = uuidv4(); // Secure unique session identifier
         const userId = req.user._id;
-        const session = new Session({ sessionId, user: userId, messages: [] });
+        const session = new Session({ sessionId, user: userId, messages: [], sessionName: 'New Chat' });
 
         await session.save();
 

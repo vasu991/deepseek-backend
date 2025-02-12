@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const sessionSchema = new mongoose.Schema(
   {
+    sessionName: { type: String, required: true },
     sessionId: { type: String, required: true, unique: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],

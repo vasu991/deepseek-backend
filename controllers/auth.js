@@ -13,15 +13,14 @@ const register = async (req, res, next) => {
     }
     const user = new User({ username, email, password});
     // Create a new session for the user
-    const session = new Session({ sessionId: generateSessionId() });
+    const session = new Session({ sessionId: generateSessionId(), user: user._id });
     await session.save();
 
     // Associate the session with the user
     user.sessions.push(session._id);
     await user.save();
     // console.log('Stored Hashed Password:', user.password);
-    await user.save();
-    res.json({ message: 'Registration successful' });
+    res.status(201).json({ message: 'Registration successful' });
   } catch (error) {
     next(error);
   }
@@ -48,9 +47,9 @@ const login = async (req, res, next) => {
       }
 
       const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-          expiresIn: '1 hour'
+          expiresIn: '1h'
       });
-      res.json({ token });
+      res.json({ token, user: user });
   } catch (error) {
       console.error('Login Error:', error); // Debugging
       next(error);
