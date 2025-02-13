@@ -10,7 +10,7 @@ const tokenizer = require('../utils/tokenizer');
 const { authenticate } = require('../middlewares/auth');
 
 // GET /chat/:sessionId
-router.get('/chat/:sessionId', authenticate, async (req, res) => {
+router.get('/:sessionId', authenticate, async (req, res) => {
     try {
         const { sessionId } = req.params;
         const sId = await Session.findOne({ sessionId });
@@ -27,49 +27,9 @@ router.get('/chat/:sessionId', authenticate, async (req, res) => {
     }
 });
 
-router.get('/sessions/:username', authenticate, async (req, res) => {
-    try {
-        const { username } = req.params;
-
-        // ✅ Find user by username
-        const user = await User.findOne({ username });
-
-        if (!user) {
-            console.log("User not found:", username);
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // ✅ Fetch sessions using user ID
-        const sessions = await Session.find({ user: user._id }).select('sessionId createdAt');
-
-        res.json(sessions);
-    } catch (error) {
-        console.error("Error fetching sessions:", error);
-        res.status(500).json({ error: 'Failed to fetch sessions' });
-    }
-});
-
-
-
-
-// Create a new chat session
-router.get('/new-session', authenticate, async (req, res) => {
-    try {
-        const sessionId = uuidv4(); // Secure unique session identifier
-        const userId = req.user._id;
-        const session = new Session({ sessionId, user: userId, messages: [], sessionName: 'New Chat' });
-
-        await session.save();
-
-        res.status(201).json(session);
-    } catch (error) {
-        console.error('Error creating new session:', error);
-        res.status(500).json({ error: 'Failed to create a new session.' });
-    }
-});
 
 // POST /chat
-router.post('/chat', authenticate, async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
     const { sessionId, prompt } = req.body;
 
     if (!sessionId || !prompt) {
