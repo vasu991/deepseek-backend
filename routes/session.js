@@ -19,7 +19,7 @@ router.get('/sessions/:username', authenticate, async (req, res) => {
 
         // ✅ Fetch sessions using user ID
         const sessions = await Session.find({ user: user._id });
-        console.log("Sessions:", sessions);
+        // console.log("Sessions:", sessions);
 
         res.json(sessions);
     } catch (error) {
