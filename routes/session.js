@@ -9,7 +9,6 @@ router.get('/sessions/:username', authenticate, async (req, res) => {
     try {
         const { username } = req.params;
 
-        // ✅ Find user by username
         const user = await User.findOne({ username });
 
         if (!user) {
@@ -17,7 +16,6 @@ router.get('/sessions/:username', authenticate, async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // ✅ Fetch sessions using user ID
         const sessions = await Session.find({ user: user._id });
         // console.log("Sessions:", sessions);
 
